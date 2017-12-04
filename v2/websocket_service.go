@@ -266,7 +266,7 @@ func (b *bfxWebsocket) handleMessage(msg []byte) error {
 				return nil
 			}
 			if h, has := b.publicHandlers[int64(chanID)]; has {
-				go h(td)
+				h(td)
 				return nil
 			}
 		} else {
