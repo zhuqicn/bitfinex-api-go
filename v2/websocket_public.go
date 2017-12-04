@@ -7,6 +7,13 @@ import (
 	"github.com/bitfinexcom/bitfinex-api-go/utils"
 )
 
+const (
+	CONFIG_DEC_S = 8 // Enable all decimal as strings.
+	CONFIG_TIME_S = 32 // Enable all times as date strings.
+	CONFIG_SEQ_ALL = 65536 // Enable sequencing BETA FEATURE
+	CONFIG_CHECKSUM = 131072 // Enable checksum for every book iteration. Checks the top 25 entries for each side of book. Checksum is a signed int.
+)
+
 type unsubscribeMsg struct {
 	Event  string `json:"event"`
 	ChanID int64  `json:"chanId"`
@@ -108,6 +115,13 @@ func (b *bfxWebsocket) handlePublicDataMessage(raw []interface{}) (interface{}, 
 		// representing an update and the latter a snapshot.
 		if fp, ok := raw[2].([]interface{}); ok {
 			return b.processDataSlice(fp)
+		} else if raw[1].(string) == "cs" {
+			switch t := raw[2].(type) {
+  			default:
+					return CheckSum{Data: t.(int32)}, nil
+				case float64:
+					return CheckSum{Data: int32(t)}, nil
+			}
 		}
 	}
 
@@ -144,4 +158,20 @@ func (b *bfxWebsocket) processDataSlice(data []interface{}) (interface{}, error)
 	}
 
 	return items, nil
+}
+
+type ConfigRequest struct {
+	Event string `json:"event"`
+	Flags int64 `json:"flags"`
+}
+
+func (b *bfxWebsocket) SetConfig(ctx context.Context, flags int64) error {
+	if b.ws == nil {
+		return ErrWSNotConnected
+	}
+	msg := &ConfigRequest{
+		Event: "conf",
+		Flags: flags,
+	}
+	return b.Send(ctx, msg)
 }

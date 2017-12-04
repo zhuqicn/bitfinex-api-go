@@ -90,6 +90,10 @@ type Heartbeat struct {
 	//ChannelIDs []int64
 }
 
+type CheckSum struct {
+	Data int32
+}
+
 // OrderType represents the types orders the bitfinex platform can handle.
 type OrderType string
 
