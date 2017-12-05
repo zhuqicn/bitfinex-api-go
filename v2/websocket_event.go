@@ -11,6 +11,8 @@ type eventType struct {
 
 type InfoEvent struct {
 	Version int `json:"version"`
+	Code    int `json:"code,omitempty"`
+	Message string `json:"msg,omitempty"`
 }
 
 type AuthEvent struct {
@@ -62,7 +64,7 @@ type SubscribeEvent struct {
 }
 
 type ConfEvent struct {
-	Flags int `json:"flags"`
+	Status string `json:"status"`
 }
 
 // onEvent handles all the event messages and connects SubID and ChannelID.
@@ -76,7 +78,9 @@ func (b *bfxWebsocket) onEvent(msg []byte) (interface{}, error) {
 	var e interface{}
 	switch event.Event {
 	case "info":
-		e = InfoEvent{}
+		infoEvent := InfoEvent{}
+		err = json.Unmarshal(msg, &infoEvent)
+		return infoEvent, err
 	case "auth":
 		// TODO: should the lib itself keep track of the authentication
 		// 			 status?
@@ -115,7 +119,9 @@ func (b *bfxWebsocket) onEvent(msg []byte) (interface{}, error) {
 	case "error":
 		e = ErrorEvent{}
 	case "conf":
-		e = ConfEvent{}
+		confEvent := ConfEvent{}
+		err = json.Unmarshal(msg, &confEvent)
+		return confEvent, err
 	default:
 		return nil, fmt.Errorf("unknown event: %s", msg) // TODO: or just log?
 	}

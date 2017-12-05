@@ -5,6 +5,10 @@ import (
 	"fmt"
 )
 
+const (
+
+)
+
 // OrderNewRequest represents an order to be posted to the bitfinex websocket
 // service.
 type OrderNewRequest struct {

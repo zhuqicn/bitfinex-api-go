@@ -24,6 +24,10 @@ const (
 	ChanTrades  = "trades"
 	ChanTicker  = "ticker"
 	ChanCandles = "candles"
+	INFO_CODE_UNKNOWN_EVENT  = 10000
+	INFO_CODE_UNKNOWN_PAIR   = 10001
+	INFO_CODE_RESTART_SERVER = 20051
+	INFO_CODE_MAINTENANCE    = 20060
 )
 
 // Prefixes for available pairs
